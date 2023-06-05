@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "cargo prisma"
+	output = "../src/prisma.rs"
+}
+
+model User {
+  id             Int           @id @default(autoincrement())
+  name           String        @db.VarChar(255)
+  email          String        @unique @db.VarChar(255)
+  password       String        @db.VarChar(255)
+  linkedinToken  String        @db.VarChar(255)
+  resumeFile     String        @db.VarChar(255)
+  salaryRange    String        @db.VarChar(255)
+  searchKeywords String        @db.VarChar(255)
+  applications   Application[]
+}
+
+model Job {
+  id           Int           @id @default(autoincrement())
+  title        String        @db.VarChar(255)
+  description  String        @db.Text
+  company      String        @db.VarChar(255)
+  location     String        @db.VarChar(255)
+  salary       String        @db.VarChar(255)
+  url          String        @db.VarChar(255)
+  applications Application[]
+}
+
+model Application {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  jobId    Int
+  date     DateTime
+  status   String   @db.VarChar(255)
+  feedback String?  @db.Text
+  user     User     @relation(fields: [userId], references: [id])
+  job      Job      @relation(fields: [jobId], references: [id])
+  data     String?  @db.Text
+}
